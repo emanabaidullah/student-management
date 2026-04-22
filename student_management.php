@@ -1,0 +1,169 @@
+<?php
+$conn = new mysqli("localhost", "root", "", "college_db");
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+/* DELETE STUDENT */
+if (isset($_GET['delete'])) {
+    $id = $_GET['delete'];
+    $conn->query("DELETE FROM students WHERE id=$id");
+}
+
+/* ADD STUDENT */
+if (isset($_POST['submit'])) {
+    $name = $_POST['name'];
+    $age = $_POST['age'];
+    $email = $_POST['email'];
+
+    $conn->query("INSERT INTO students (name, age, email) 
+                  VALUES ('$name', '$age', '$email')");
+}
+
+/* GET ALL STUDENTS */
+$result = $conn->query("SELECT * FROM students");
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Management System</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+        }
+
+        /* Form Styling */
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        input[type="submit"] {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        input[type="submit"]:hover {
+            background: #2980b9;
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        table th, table td {
+            padding: 12px;
+            text-align: center;
+        }
+
+        table th {
+            background: #2c3e50;
+            color: white;
+        }
+
+        table tr:nth-child(even) {
+            background: #f2f2f2;
+        }
+
+        table tr:hover {
+            background: #e6f7ff;
+        }
+
+        /* Delete Button */
+        a {
+            text-decoration: none;
+            color: white;
+            background: #e74c3c;
+            padding: 6px 10px;
+            border-radius: 5px;
+        }
+
+        a:hover {
+            background: #c0392b;
+        }
+    </style>
+
+</head>
+<body>
+
+<div class="container">
+
+<h2>Add Student</h2>
+
+<form method="POST">
+    <input type="text" name="name" placeholder="Enter Name" required>
+    <input type="number" name="age" placeholder="Enter Age" required>
+    <input type="email" name="email" placeholder="Enter Email" required>
+    <input type="submit" name="submit" value="Add Student">
+</form>
+
+<h2>Student List</h2>
+
+<table>
+<tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Age</th>
+    <th>Email</th>
+    <th>Action</th>
+</tr>
+
+<?php while ($row = $result->fetch_assoc()) { ?>
+<tr>
+    <td><?php echo $row['id']; ?></td>
+    <td><?php echo $row['name']; ?></td>
+    <td><?php echo $row['age']; ?></td>
+    <td><?php echo $row['email']; ?></td>
+    <td>
+        <a href="?delete=<?php echo $row['id']; ?>" onclick="return confirm('Delete this student?')">
+            Delete
+        </a>
+    </td>
+</tr>
+<?php } ?>
+
+</table>
+
+</div>
+
+</body>
+</html>
